@@ -1,0 +1,26 @@
+# Python virtual environments
+venv
+env
+.venv
+projectenv
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+
+# Django artifacts
+db.sqlite3
+media
+staticfiles
+
+# Git
+.git
+.gitignore
+
+# Node (if any)
+node_modules
+
+# OS junk
+.DS_Store
+Thumbs.db

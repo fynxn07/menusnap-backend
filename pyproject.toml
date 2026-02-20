@@ -1,0 +1,62 @@
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+exclude = '''
+/(
+     migrations
+  | static
+  | media
+  | \.venv
+  | venv
+  | env
+  | projectenv
+  | node_modules
+)/
+'''
+
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+
+src_paths = ["MenuSnap", "accounts", "menu", "orders", "restaurants"]
+
+skip = [
+    "migrations",
+]
+
+skip_glob = [
+    "*/migrations/*",
+    "*/static/*",
+    "*/media/*",
+    "*/.venv/*",
+    "*/venv/*",
+    "*/env/*",
+    "*/projectenv/*",
+    "*/site-packages/*",
+    "*/node_modules/*",
+]
+
+
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+    "E203",  # conflict with Black
+    "W503",  # line break before operator (Black style)
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    "migrations",
+    "static",
+    "media",
+    ".venv",
+    "venv",
+    "env",
+    "projectenv",
+    "node_modules",
+    "site-packages",
+]
+max-complexity = 10

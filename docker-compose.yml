@@ -1,0 +1,95 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: menusnap_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: MenuSnap
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: menusnap_redis
+    restart: always
+    expose:
+      - "6379"
+
+  backend:
+    build: ./MenuSnap_Django
+    container_name: menusnap_backend
+    restart: always
+    env_file:
+      - MenuSnap_Django/.env
+    depends_on:
+      - postgres
+      - redis
+    expose:
+      - "8000"
+    volumes:
+      - ./MenuSnap_Django:/app
+      - ./pyproject.toml:/app/pyproject.toml  
+      - static_volume:/app/staticfiles
+
+
+  notification:
+    build: ./notification-service
+    container_name: menusnap_notification
+    restart: always
+    env_file:
+      - notification-service/.env
+    depends_on:
+      - redis
+    expose:
+      - "8001"
+    volumes:
+      - ./notification-service:/app
+      - ./pyproject.toml:/app/pyproject.toml 
+      
+
+  celery_worker:
+    build: ./MenuSnap_Django
+    container_name: menusnap_celery_worker
+    restart: always
+    command: celery -A accounts worker -l info
+    env_file:
+      - MenuSnap_Django/.env
+    depends_on:
+      - redis
+      - postgres
+      - backend
+    
+
+  celery_beat:
+    build: ./MenuSnap_Django
+    container_name: menusnap_celery_beat
+    restart: always
+    command: celery -A accounts worker -l info
+    env_file:
+      - MenuSnap_Django/.env
+    depends_on:
+      - redis
+      - postgres
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: menusnap_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/static
+    depends_on:
+      - backend
+      - notification
+
+volumes:
+  postgres_data:
+  static_volume:
