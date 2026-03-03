@@ -9,6 +9,7 @@ from .views import (
     MenuItemListCreateView,
     MenuStatsView,
     PublicMenuView,
+    MenuExportView,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
         "customer_menu/<int:restaurant_id>/<uuid:table_id>/", CustomerMenuView.as_view()
     ),
     path("public_menu/<int:restaurant_id>/", PublicMenuView.as_view()),
+    path("export/<int:restaurant_id>/",MenuExportView.as_view()),
 ]

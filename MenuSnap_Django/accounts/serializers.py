@@ -9,6 +9,7 @@ from .models import User
 class UserProfileSerializer(serializers.ModelSerializer):
     is_onboarding_completed = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    restaurant_id = serializers.IntegerField(source="restaurant.id",read_only=True)
 
     class Meta:
         model = User
@@ -18,6 +19,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "name",
             "role",
             "profile_image",
+            "restaurant_id",
             "created_at",
             "is_onboarding_completed",
         ]

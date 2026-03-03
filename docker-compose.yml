@@ -19,6 +19,12 @@ services:
     restart: always
     expose:
       - "6379"
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   backend:
     build: ./MenuSnap_Django
@@ -33,6 +39,7 @@ services:
       - "8000"
     volumes:
       - ./MenuSnap_Django:/app
+      - ./analytics_pipeline:/app/analytics_pipeline
       - ./pyproject.toml:/app/pyproject.toml  
       - static_volume:/app/staticfiles
 
@@ -44,13 +51,52 @@ services:
     env_file:
       - notification-service/.env
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     expose:
       - "8001"
     volumes:
       - ./notification-service:/app
       - ./pyproject.toml:/app/pyproject.toml 
-      
+
+  analytics:
+    build: ./analytics-service
+    container_name: menusnap_analytics
+    restart: always
+    env_file:
+      - analytics-service/.env
+    expose:
+      - "8002"
+    volumes:
+      - ./analytics-service:/app
+
+
+  chatbot:
+    build: ./chatbot-service
+    container_name: menusnap_chatbot
+    restart: always
+    env_file:
+      - chatbot-service/.env
+    depends_on:
+      - backend
+    expose:
+      - "8000"
+    volumes:
+      - ./chatbot-service:/app
+      - ./analytics_pipeline:/app/analytics_pipeline
+
+
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: menusnap_ollama
+    restart: always
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+     
+          
 
   celery_worker:
     build: ./MenuSnap_Django
@@ -63,6 +109,9 @@ services:
       - redis
       - postgres
       - backend
+    volumes:
+      - ./MenuSnap_Django:/app
+      - ./analytics_pipeline:/app/analytics_pipeline 
     
 
   celery_beat:
@@ -76,6 +125,9 @@ services:
       - redis
       - postgres
       - backend
+    volumes:
+      - ./MenuSnap_Django:/app
+      - ./analytics_pipeline:/app/analytics_pipeline 
 
   nginx:
     image: nginx:alpine
@@ -89,7 +141,11 @@ services:
     depends_on:
       - backend
       - notification
+      - analytics
+
+    
 
 volumes:
   postgres_data:
   static_volume:
+  ollama_data:

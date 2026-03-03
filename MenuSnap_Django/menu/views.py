@@ -4,6 +4,8 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from analytics_pipeline.producers.python.analytics_producer import AnalyticsProducer
+
 
 from restaurants.models import Restaurant, Table
 
@@ -13,6 +15,7 @@ from .serializers import (
     MenuCategorySerializer,
     MenuItemSerializer,
     PublicMenuResponseSerializer,
+    AIMenuExportSerializer,
 )
 
 # Create your views here.
@@ -155,10 +158,35 @@ class CustomerMenuView(APIView):
             return Response({"detail": "Table not found"}, status=404)
 
         items = MenuItem.objects.filter(
-            restaurant=restaurant, is_active=True, is_available=True
+            restaurant=restaurant,
+            is_active=True,
+            is_available=True
         ).select_related("category")
 
-        data = {"restaurant": restaurant, "table": table, "items": items}
+        # 🔥 Analytics: Menu Viewed
+        try:
+            producer = AnalyticsProducer()
+
+            producer.send_event(
+                event_type="menu_viewed",
+                restaurant_id=str(restaurant.id),
+                data={
+                    "table_id": str(table.id),
+                    "table_number": table.table_number,
+                    "menu_item_count": items.count(),
+                },
+            )
+
+            print("✅ ANALYTICS: menu_viewed sent")
+
+        except Exception as e:
+            print(f"[Analytics] menu_viewed failed: {e}")
+
+        data = {
+            "restaurant": restaurant,
+            "table": table,
+            "items": items
+        }
 
         serializer = CustomerMenuResponseSerializer(data)
         return Response(serializer.data)
@@ -203,3 +231,19 @@ class MenuStatsView(APIView):
                 "limit": limit,
             }
         )
+
+
+
+class MenuExportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, restaurant_id):
+        items = MenuItem.objects.filter(
+            restaurant__id=restaurant_id,
+            is_available=True,
+            is_active=True,
+        ).select_related("category", "restaurant")
+
+        serializer = AIMenuExportSerializer(items, many=True)
+
+        return Response(serializer.data)

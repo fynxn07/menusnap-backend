@@ -49,8 +49,8 @@ class KitchenOrderItemSerializer(serializers.ModelSerializer):
 
 class KitchenOrderSerializer(serializers.ModelSerializer):
     items = KitchenOrderItemSerializer(many=True, read_only=True)
-    table_number = serializers.IntegerField(source="table.table_number", read_only=True)
-    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
+    table_number = serializers.IntegerField(source="table.table_number")
+    restaurant_name = serializers.CharField(source="restaurant.name")
 
     class Meta:
         model = Order
@@ -63,12 +63,12 @@ class KitchenOrderSerializer(serializers.ModelSerializer):
             "created_at",
             "items",
         ]
-        read_only_fields = ["id", "created_at"]
+        
 
 
-class KitchenOrdersResponseSerializer(serializers.Serializer):
-    restaurant_name = serializers.CharField()
-    orders = KitchenOrderSerializer(many=True)
+# class KitchenOrdersResponseSerializer(serializers.Serializer):
+#     restaurant_name = serializers.CharField()
+#     orders = KitchenOrderSerializer(many=True)
 
 
 class OrderStatusSerializer(serializers.ModelSerializer):
@@ -88,7 +88,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
 class UpdateOrderStatusResponseSerializer(serializers.ModelSerializer):
     order_id = serializers.UUIDField(source="id", read_only=True)
-    table_number = serializers.IntegerField(source="table.table_number", read_only=True)
+    table_number = serializers.IntegerField(source="table.table_number")
     message = serializers.SerializerMethodField()
 
     class Meta:
@@ -98,6 +98,7 @@ class UpdateOrderStatusResponseSerializer(serializers.ModelSerializer):
             "order_id",
             "status",
             "table_number",
+            "created_at",
         ]
 
     def get_message(self, obj):

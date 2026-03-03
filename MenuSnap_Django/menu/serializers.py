@@ -154,3 +154,27 @@ class PublicRestaurantSerializer(serializers.ModelSerializer):
 class PublicMenuResponseSerializer(serializers.Serializer):
     restaurant = PublicRestaurantSerializer()
     categories = PublicMenuCategorySerializer(many=True)
+
+
+
+class AIMenuExportSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source="category.name", read_only=True)
+    restaurant_id = serializers.IntegerField(source="restaurant.id", read_only=True)
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MenuItem
+        fields = [
+            "id",
+            "restaurant_id",
+            "name",
+            "description",
+            "price",
+            "is_veg",
+            "is_available",
+            "category_name",
+            "image_url",
+        ]
+
+    def get_image_url(self, obj):
+        return obj.image.url if obj.image else None
