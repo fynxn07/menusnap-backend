@@ -29,6 +29,6 @@ ENV PYTHONPATH=/app
 
 RUN python manage.py collectstatic --noinput
 
-RUN python manage.py migrate
+RUN python manage.py migrate --noinput
 
 CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
