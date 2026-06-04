@@ -17,7 +17,7 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app/MenuSnap_Django
+WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -35,5 +35,7 @@ RUN python -m pip install --upgrade pip \
 
 
 COPY . .
+
+WORKDIR /app/MenuSnap_Django
 
 CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
