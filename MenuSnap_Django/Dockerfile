@@ -1,17 +1,3 @@
-# FROM python:3.12-slim
-
-# WORKDIR /app
-
-# COPY requirements.txt .
-
-# RUN pip install --no-cache-dir -r requirements.txt
-
-# COPY . .
-
-# CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
-
-
-
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -42,5 +28,7 @@ WORKDIR /app/MenuSnap_Django
 ENV PYTHONPATH=/app
 
 RUN python manage.py collectstatic --noinput
+
+RUN python manage.py migrate
 
 CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
