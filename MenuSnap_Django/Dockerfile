@@ -38,6 +38,9 @@ COPY . .
 
 WORKDIR /app/MenuSnap_Django
 
+
 ENV PYTHONPATH=/app
+
+RUN python manage.py collectstatic --noinput
 
 CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
