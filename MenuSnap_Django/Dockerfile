@@ -39,6 +39,7 @@ COPY . .
 WORKDIR /app/MenuSnap_Django
 
 RUN echo "=== APP ===" && ls -la /app && \
+    echo "=== ANALYTICS ===" && ls -la /app/analytics_pipeline || true && \
     echo "=== MENUSNAP_DJANGO ===" && ls -la /app/MenuSnap_Django
 
 CMD ["gunicorn", "MenuSnap.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "1", "--bind", "0.0.0.0:8000"]
