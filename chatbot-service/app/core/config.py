@@ -7,6 +7,8 @@ class Settings(BaseSettings):
 
     # 🔹 LLM / API keys
     OPENAI_API_KEY: str | None = None
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL_NAME: str = "gemini-2.0-flash"
 
     # 🔥 AWS Analytics Configuration
     AWS_ACCESS_KEY_ID: str | None = None

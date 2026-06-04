@@ -8,7 +8,10 @@ pypdf
 langchain==0.1.20
 langchain-community==0.0.38
 langchain-text-splitters
-chromadb
+chromadb==0.5.0
+
+google-generativeai
+langchain-google-genai
 
 httpx
 boto3

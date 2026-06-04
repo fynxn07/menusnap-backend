@@ -26,8 +26,8 @@ RUN apt-get update && apt-get install -y \
 
 
 
-COPY requirements.txt .
-COPY requirements-dev.txt .
+COPY MenuSnap_Django/requirements.txt .
+COPY MenuSnap_Django/requirements-dev.txt .
 
 RUN python -m pip install --upgrade pip \
     && pip install -r requirements.txt \
