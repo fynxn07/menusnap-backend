@@ -132,3 +132,26 @@ class RestaurantLogoUploadView(APIView):
             {"message": "Logo uploaded successfully", "logo_url": restaurant.logo.url},
             status=status.HTTP_200_OK,
         )
+
+
+class JoinTableView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        code = request.data.get("manual_code")
+
+        table = Table.objects.filter(
+            manual_code=code.upper()
+        ).select_related("restaurant").first()
+
+        if not table:
+            return Response(
+                {"error": "Invalid table code"},
+                status=404
+            )
+
+        return Response({
+            "restaurant_id": table.restaurant.id,
+            "table_id": str(table.id),
+            "table_number": table.table_number,
+        })
