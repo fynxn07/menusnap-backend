@@ -56,10 +56,9 @@ class Table(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     manual_code = models.CharField(
         max_length=6,
-        unique=True,
         editable=False,
         blank=True,
-        null=True
+        null=True,
     )
     
     restaurant = models.ForeignKey(

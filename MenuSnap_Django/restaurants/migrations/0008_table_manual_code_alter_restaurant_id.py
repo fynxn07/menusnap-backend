@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             model_name="table",
             name="manual_code",
             field=models.CharField(
-                blank=True, editable=False, max_length=6, unique=True
+                blank=True, editable=False, max_length=6, null=True
             ),
         ),
         migrations.AlterField(
