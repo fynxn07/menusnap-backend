@@ -165,3 +165,26 @@ class JoinTableView(APIView):
                 "table_number": table.table_number,
             }
         )
+        
+
+class RestaurantTablesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        restaurant = request.user.restaurant or getattr(
+            request.user, "owned_restaurant", None
+        )
+
+        if not restaurant:
+            return Response(
+                {"error": "Restaurant not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        tables = Table.objects.filter(
+            restaurant=restaurant
+        ).order_by("table_number")
+
+        return Response(
+            TableSerializer(tables, many=True).data
+        )

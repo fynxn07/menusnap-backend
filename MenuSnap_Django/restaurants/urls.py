@@ -7,6 +7,7 @@ from .views import (
     RestaurantLogoUploadView,
     RestaurantOnboardingView,
     JoinTableView,
+    RestaurantTablesView,
 )
 
 urlpatterns = [
@@ -16,4 +17,6 @@ urlpatterns = [
     path("complete_onboarding/", CompleteOnboardingView.as_view()),
     path("upload_logo/", RestaurantLogoUploadView.as_view()),
     path("join-table/", JoinTableView.as_view(), name="join-table"),
+    path("tables/", RestaurantTablesView.as_view()),
+    
 ]
