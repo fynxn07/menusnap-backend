@@ -138,20 +138,30 @@ class JoinTableView(APIView):
     permission_classes = []
 
     def post(self, request):
-        code = request.data.get("manual_code")
+        manual_code = request.data.get("manual_code")
 
-        table = Table.objects.filter(
-            manual_code=code.upper()
-        ).select_related("restaurant").first()
+        if not manual_code:
+            return Response(
+                {"error": "Table code is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        table = (
+            Table.objects.select_related("restaurant")
+            .filter(manual_code=manual_code.upper())
+            .first()
+        )
 
         if not table:
             return Response(
                 {"error": "Invalid table code"},
-                status=404
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-        return Response({
-            "restaurant_id": table.restaurant.id,
-            "table_id": str(table.id),
-            "table_number": table.table_number,
-        })
+        return Response(
+            {
+                "restaurant_id": table.restaurant.id,
+                "table_id": str(table.id),
+                "table_number": table.table_number,
+            }
+        )
