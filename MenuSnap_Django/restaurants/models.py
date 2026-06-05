@@ -53,12 +53,30 @@ class Restaurant(models.Model):
 
 class Table(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    manual_code = models.CharField(
+        max_length=6,
+        unique=True,
+        editable=False,
+        blank=True,
+    )
+    
     restaurant = models.ForeignKey(
         "restaurants.Restaurant", on_delete=models.CASCADE, related_name="tables"
     )
+    
     table_number = models.PositiveIntegerField()
     qr_code = models.ImageField(upload_to="table_qrCodes/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.manual_code:
+            while True:
+                code = secrets.token_hex(3).upper()  # 6 chars
+                if not Table.objects.filter(manual_code=code).exists():
+                    self.manual_code = code
+                    break
+
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ("restaurant", "table_number")

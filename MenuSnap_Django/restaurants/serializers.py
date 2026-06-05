@@ -33,8 +33,9 @@ class RestaurantBrandingSerializer(serializers.ModelSerializer):
 class TableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table
-        fields = ["id", "table_number", "qr_code"]
-        read_only_fields = ["id", "qr_code"]
+        fields = ["id", "table_number", "qr_code","manual_code"]
+        read_only_fields = ["id", "qr_code","manual_code"]
+    
 
 
 class BulkTableCreateSerializer(serializers.Serializer):

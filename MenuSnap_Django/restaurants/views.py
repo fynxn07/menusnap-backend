@@ -81,7 +81,7 @@ class BulkTableCreateView(APIView):
                 restaurant=restaurant, table_number=table_number
             )
 
-            qr_url = f"{settings.FRONTEND_URL}/menu/{restaurant.id}?table={table.id}"
+            qr_url = f"{settings.FRONTEND_URL}/menu/{restaurant.id}?code={table.manual_code}"
             qr_image = generate_qr_code(qr_url)
             table.qr_code.save(f"table_{table_number}.png", qr_image)
 
