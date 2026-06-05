@@ -59,6 +59,7 @@ class Table(models.Model):
         unique=True,
         editable=False,
         blank=True,
+        null=True
     )
     
     restaurant = models.ForeignKey(
