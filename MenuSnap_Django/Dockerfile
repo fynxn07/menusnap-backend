@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-COPY requirements-dev.txt .
+
 
 RUN python -m pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && pip install -r requirements-dev.txt
+    
 
 COPY . .
 
