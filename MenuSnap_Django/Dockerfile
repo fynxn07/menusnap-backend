@@ -10,14 +10,20 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
 
+
+COPY MenuSnap_Django/requirements.txt .
+COPY MenuSnap_Django/requirements-dev.txt .
 
 RUN python -m pip install --upgrade pip \
     && pip install -r requirements.txt \
-    
+    && pip install -r requirements-dev.txt
+
 
 COPY . .
+
+WORKDIR /app/MenuSnap_Django
+
 
 ENV PYTHONPATH=/app
 
